@@ -31,6 +31,19 @@
       color: #4CAF50;
       font-size: 1.6em;
     }
+    input[type="text"], input[type="email"] {
+      padding: 12px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 8px;
+      border: none;
+      margin: 10px 0;
+      font-size: 16px;
+      text-align: center;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
     button {
       background-color: #4CAF50;
       border: none;
@@ -53,12 +66,20 @@
       font-size: 16px;
       line-height: 1.6;
     }
+    /* Sections */
+    .page {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <img src="Rush hour Chess.jpeg" alt="RushHour Chess Logo" class="logo">
 
-  <div class="card">
+  <!-- Page 1 -->
+  <div id="page1" class="card page active">
     <h1>♟ RushHour Chess Puzzle Challenge</h1>
     <p>Pay <strong>$1 (KES 125)</strong> to attempt the endgame puzzle and stand a chance to <strong>win $50 (KES 6,250)!</strong></p>
 
@@ -72,10 +93,66 @@
       </ul>
     </div>
 
-    <!-- Button links to 2nd page -->
-    <a href="participate.html">
-      <button>I want to participate</button>
-    </a>
+    <button onclick="goToPage2()">I want to participate</button>
   </div>
+
+  <!-- Page 2 -->
+  <div id="page2" class="card page">
+    <h1>Complete Your Participation</h1>
+    <input type="text" id="payerName" placeholder="Enter your name" required>
+    <input type="email" id="payerEmail" placeholder="Enter your email" required>
+    <button onclick="payWithPaystack()">Proceed to Payment</button>
+  </div>
+
+  <!-- Paystack Script -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    function goToPage2() {
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+    }
+
+    function payWithPaystack() {
+      var name = document.getElementById("payerName").value;
+      var email = document.getElementById("payerEmail").value;
+
+      if (!name || !email) {
+        alert("Please enter your name and email before proceeding.");
+        return;
+      }
+
+      var handler = PaystackPop.setup({
+        key: 'pk_test_4267eb88afba104984e24dd30e98880042131088',
+        email: email,
+        amount: 125 * 100, 
+        currency: "KES",
+        metadata: {
+          custom_fields: [
+            { display_name: "Participant Name", variable_name: "payer_name", value: name }
+          ]
+        },
+        callback: function(response){
+          alert('✅ Payment successful! You can now download your puzzle.');
+
+          var downloadLink = document.createElement("a");
+          downloadLink.href = "White%20to%20play%20and%20win.docx"; 
+          downloadLink.download = "White to play and win.docx";
+          downloadLink.innerText = "⬇️ Download Puzzle File";
+          downloadLink.style.display = "block";
+          downloadLink.style.marginTop = "20px";
+          downloadLink.style.color = "#4CAF50";
+          downloadLink.style.fontSize = "18px";
+          downloadLink.style.textDecoration = "none";
+          downloadLink.style.fontWeight = "bold";
+
+          document.getElementById("page2").appendChild(downloadLink);
+        },
+        onClose: function(){
+          alert('Payment window closed.');
+        }
+      });
+      handler.openIframe();
+    }
+  </script>
 </body>
 </html>
