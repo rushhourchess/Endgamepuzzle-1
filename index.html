@@ -137,7 +137,22 @@
           ]
         },
         callback: function(response){
-          alert('✅ Payment successful! Please send your PGN file to rushhourchess@gmail.com.');
+          alert('✅ Payment successful! You can now download your puzzle.');
+
+          // Create a download link dynamically
+          var downloadLink = document.createElement("a");
+          downloadLink.href = "White%20to%20play%20and%20win.docx"; 
+          downloadLink.download = "White to play and win.docx";
+          downloadLink.innerText = "⬇️ Download Puzzle File";
+          downloadLink.style.display = "block";
+          downloadLink.style.marginTop = "20px";
+          downloadLink.style.color = "#4CAF50";
+          downloadLink.style.fontSize = "18px";
+          downloadLink.style.textDecoration = "none";
+          downloadLink.style.fontWeight = "bold";
+
+          // Append link inside the card
+          document.querySelector(".card").appendChild(downloadLink);
         },
         onClose: function(){
           alert('Payment window closed.');
@@ -148,4 +163,3 @@
   </script>
 </body>
 </html>
-
